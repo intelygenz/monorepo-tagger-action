@@ -1,5 +1,7 @@
 # Monorepo Tagger Action
 
+[![Build Action](https://github.com/intelygenz/monorepo-tagger-action/actions/workflows/release.yml/badge.svg)](https://github.com/intelygenz/monorepo-tagger-action/actions/workflows/release.yml)
+
 Opinionated action to manage releases tag life-cycle in a mono-repo with multiple components
 
 This action helps to manage the release lifecycle and workflow in a monorepo. The action is able to tag individual 
