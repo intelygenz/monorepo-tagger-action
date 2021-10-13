@@ -39,7 +39,7 @@ the branch you can restore it from the release tag created.
 
 ```yaml
 - name: Generate a release tag for Component1
-  uses: intelygenz/monorepo-tagger-action@v1
+  uses: intelygenz/action-monorepo-version-tags-lifecycle@1.0
   with:
     mode: 'component'
     type: 'final'
@@ -50,7 +50,7 @@ the branch you can restore it from the release tag created.
 
 ```yaml
 - name: Generate a fix tag for Component1
-  uses: intelygenz/monorepo-tagger-action@v1
+  uses: intelygenz/action-monorepo-version-tags-lifecycle@1.0
   with:
     mode: 'component'
     type: 'fix'
@@ -62,7 +62,7 @@ the branch you can restore it from the release tag created.
 
 ```yaml
 - name: Generate a fix tag for Component1
-  uses: intelygenz/monorepo-tagger-action@v1
+  uses: intelygenz/action-monorepo-version-tags-lifecycle@1.0
   with:
     mode: 'component'
     type: 'fix'
@@ -74,7 +74,7 @@ the branch you can restore it from the release tag created.
 
 ```yaml
 - name: Generate a pre-release product tag
-  uses: intelygenz/monorepo-tagger-action@v1
+  uses: intelygenz/action-monorepo-version-tags-lifecycle@1.0
   with:
     mode: 'product'
     type: 'pre-release'
@@ -87,7 +87,7 @@ the branch you can restore it from the release tag created.
 
 ```yaml
 - name: Create a new release branch
-  uses: intelygenz/monorepo-tagger-action@v1
+  uses: intelygenz/action-monorepo-version-tags-lifecycle@1.0
   with:
     mode: 'product'
     type: 'new-release-branch'
@@ -98,7 +98,7 @@ the branch you can restore it from the release tag created.
 
 ```yaml
 - name: Generate a final product tag
-  uses: intelygenz/monorepo-tagger-action@v1
+  uses: intelygenz/action-monorepo-version-tags-lifecycle@1.0
   with:
     mode: 'product'
     type: 'final'
@@ -108,7 +108,7 @@ the branch you can restore it from the release tag created.
 
 ```yaml
 - name: Generate a fix product tag
-  uses: intelygenz/monorepo-tagger-action@v1
+  uses: intelygenz/action-monorepo-version-tags-lifecycle@1.0
   with:
     mode: 'product'
     type: 'fix'
@@ -119,7 +119,7 @@ the branch you can restore it from the release tag created.
 
 ```yaml
 - name: Get Component1 last tag
-  uses: intelygenz/monorepo-tagger-action@v1
+  uses: intelygenz/action-monorepo-version-tags-lifecycle@1.0
   with:
     mode: 'query'
     type: 'component-last-version'
