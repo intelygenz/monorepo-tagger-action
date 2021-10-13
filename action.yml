@@ -12,18 +12,18 @@ inputs:
     description: 'Execution type can be "pre-release" "release" "fix" "final" "new-release-branch"'
     required: true
   current-tag:
-    description: '"Current tag of a component, e.g. "component-v0.4.0"'
+    description: 'Current tag of a component, e.g. "component-v0.4.0".'
     required: false
     default: 'v0.0.0'
   current-major:
-    description: '"Current product major version'
+    description: 'Current major version of the product.'
     required: false
     default: '0'
   component-prefix:
-    description: 'Component prefix, e.g. "hello-"'
+    description: 'Component prefix, e.g. "component1-".'
     required: false
   release-branch-prefix:
-    description: 'Release branch prefix, e.g. "release/v"'
+    description: 'Release branch prefix, e.g. "release/v".'
     required: false
   pre-release-name:
     description: 'A pre release name, e.g. "alpha" or "rc"'
