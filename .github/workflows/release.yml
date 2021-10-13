@@ -4,9 +4,13 @@ on:
   pull_request:
     branches:
       - main
+    paths:
+      - "src/**/*"
   push:
     branches:
       - main
+    paths:
+      - "src/**/*"
 
 env:
   GITHUB_TOKEN: ${{ secrets.PATNAME }}
