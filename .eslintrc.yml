@@ -1,0 +1,17 @@
+env:
+  browser: true
+  commonjs: true
+  es2021: true
+  jest/globals: true
+parserOptions:
+  ecmaVersion: 2020
+rules:
+  curly: 2
+extends:
+  - 'eslint:recommended'
+  - 'plugin:node/recommended'
+  - 'sonar'
+plugins:
+  - prettier
+  - node
+  - jest
