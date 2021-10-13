@@ -6,11 +6,9 @@ const { run } = require('./run');
 // jest.setTimeout(100000); // NOTE: uncomment for test debugging
 
 describe('mode query', () => {
-
   let octokitMock, owner, repo;
 
   beforeEach(() => {
-
     [owner, repo] = 'test-org/test-repo'.split('/');
 
     octokitMock = {
@@ -41,16 +39,15 @@ describe('mode query', () => {
 
     core.setOutput = jest.fn();
     core.setFailed = jest.fn();
-
   });
 
   test('release (query component-last-tag)', async () => {
     /*
-    // debug with real octokit object
-    const octokitMock = github.getOctokit(process.env.GITHUB_TOKEN);
-    const [owner, repo] = 'intelygenz/monorepo-ci-cd-poc'.split('/');
-
-    */
+        // debug with real octokit object
+        const octokitMock = github.getOctokit(process.env.GITHUB_TOKEN);
+        const [owner, repo] = 'intelygenz/monorepo-ci-cd-poc'.split('/');
+    
+        */
 
     const params = {
       componentPrefix: 'hello-',
@@ -67,11 +64,9 @@ describe('mode query', () => {
 });
 
 describe('mode component', () => {
-
   let octokitMock, owner, repo;
 
   beforeEach(() => {
-
     [owner, repo] = 'test-org/test-repo'.split('/');
 
     octokitMock = {
@@ -102,14 +97,13 @@ describe('mode component', () => {
 
     core.setOutput = jest.fn();
     core.setFailed = jest.fn();
-
   });
 
   test('create-release-tag', async () => {
     /* debug with real octokit object
-    const octokit = github.getOctokit(process.env.GITHUB_TOKEN);
-    const [owner, repo] = 'intelygenz/monorepo-ci-cd-poc'.split('/');
-    */
+        const octokit = github.getOctokit(process.env.GITHUB_TOKEN);
+        const [owner, repo] = 'intelygenz/monorepo-ci-cd-poc'.split('/');
+        */
 
     const params = {
       componentPrefix: 'hello-',
@@ -157,7 +151,6 @@ describe('mode component', () => {
 });
 
 describe('mode product', () => {
-
   let octokitMock, owner, repo;
 
   beforeEach(() => {
@@ -196,15 +189,14 @@ describe('mode product', () => {
 
     core.setOutput = jest.fn();
     core.setFailed = jest.fn();
-
   });
 
   test('calculate-rc-tag', async () => {
     /*
-    // debug with real octokit object
-    const octokitMock = github.getOctokit(process.env.GITHUB_TOKEN);
-    const [owner, repo] = 'intelygenz/monorepo-ci-cd-poc'.split('/');
-
+        // debug with real octokit object
+        const octokitMock = github.getOctokit(process.env.GITHUB_TOKEN);
+        const [owner, repo] = 'intelygenz/monorepo-ci-cd-poc'.split('/');
+    
     */
 
     const params = {
@@ -214,7 +206,7 @@ describe('mode product', () => {
       releaseBranchPrefix: 'release/v',
       currentMajor: '0',
       defaultBranch: 'main',
-      preReleaseName: 'rc'
+      preReleaseName: 'rc',
     };
 
     await run(octokitMock, owner, repo, params);
@@ -226,10 +218,10 @@ describe('mode product', () => {
 
   test('create-rc-tag', async () => {
     /*
-    // debug with real octokit object
-    const octokitMock = github.getOctokit(process.env.GITHUB_TOKEN);
-    const [owner, repo] = 'intelygenz/monorepo-ci-cd-poc'.split('/');
-
+        // debug with real octokit object
+        const octokitMock = github.getOctokit(process.env.GITHUB_TOKEN);
+        const [owner, repo] = 'intelygenz/monorepo-ci-cd-poc'.split('/');
+    
     */
 
     const params = {
@@ -239,7 +231,7 @@ describe('mode product', () => {
       releaseBranchPrefix: 'release/v',
       currentMajor: '0',
       defaultBranch: 'main',
-      preReleaseName: 'rc'
+      preReleaseName: 'rc',
     };
 
     await run(octokitMock, owner, repo, params);
@@ -251,9 +243,9 @@ describe('mode product', () => {
 
   test('generate-prerelease', async () => {
     /*
-    // debug with real octokit object
-    const octokit = github.getOctokit(process.env.GITHUB_TOKEN);
-    const [owner, repo] = 'intelygenz/monorepo-ci-cd-poc'.split('/');
+        // debug with real octokit object
+        const octokit = github.getOctokit(process.env.GITHUB_TOKEN);
+        const [owner, repo] = 'intelygenz/monorepo-ci-cd-poc'.split('/');
     */
 
     const params = {

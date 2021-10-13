@@ -19,8 +19,8 @@ describe('components module', () => {
     github.context.payload = {
       ref: 'refs/heads/release/v0.1',
     };
-    // AND the tag creation returns the exepected tag
-    const expectedTag = 'test-component-v1.0.1'
+    // AND the tag creation returns the expected tag
+    const expectedTag = 'test-component-v1.0.1';
     tags.createTag.mockReturnValue(expectedTag);
 
     // WHEN the component action is processed
@@ -43,7 +43,7 @@ describe('components module', () => {
     tags.getLastTagWithPrefix.mockReturnValue('test-component-v1.0.0');
 
     // AND the tag creation returns the exepected tag
-    const expectedTag = 'test-component-v1.1.0'
+    const expectedTag = 'test-component-v1.1.0';
     tags.createTag.mockReturnValue(expectedTag);
 
     // WHEN the component action is processed

@@ -5,7 +5,6 @@ const { TYPE_PRE_RELEASE, TYPE_NEW_RELEASE_BRANCH, TYPE_FIX, TYPE_FINAL } = requ
 const { parseVersion } = require('./strings');
 
 module.exports = function (tags, branches) {
-
   /**
    * Creates a new release branch.
    *

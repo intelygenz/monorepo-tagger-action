@@ -1,7 +1,6 @@
 const tagsMod = require('./tags.js');
 
 describe('get component last tag', () => {
-
   const owner = 'test';
   const repo = 'test';
   let octokit;
@@ -15,7 +14,7 @@ describe('get component last tag', () => {
         listTags: listTagMock,
       },
     };
-  })
+  });
 
   test('find last', async () => {
     const tags = tagsMod(octokit, owner, repo);

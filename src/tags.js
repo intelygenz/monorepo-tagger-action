@@ -1,6 +1,4 @@
-
 module.exports = function (octokit, owner, repo) {
-
   /**
    * Returns the last tag with a prefix.
    *

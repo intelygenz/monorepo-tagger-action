@@ -4,15 +4,14 @@ const { parseVersion } = require('./strings');
 const { TYPE_FIX, TYPE_FINAL } = require('./types');
 
 module.exports = function (tags) {
-
   /**
    * Creates a fix tag for the component.
    *
    * The tag is calculated based on actual compoment version.
    *
-   * @param prefix The componet prefix.
+   * @param prefix The component prefix.
    * @param version The component actual version (eg 3.4).
-   * @param branch Then brach in which to create the tag.
+   * @param branch Then branch in which to create the tag.
    * @param dryRun If the execution should be real.
    * @returns {String} The created tag name.
    */
@@ -30,13 +29,13 @@ module.exports = function (tags) {
   /**
    * Creates a final tag for the component.
    *
-   * @param prefix The componet prefix.
+   * @param prefix The component prefix.
    * @param version The component actual version (eg 3.4).
-   * @param branch Then brach in which to create the tag.
+   * @param branch Then branch in which to create the tag.
    * @param dryRun If the execution should be real.
    * @returns {String} The created tag name.
    */
-  async function createFinalTag(prefix, version, branch , dryRun) {
+  async function createFinalTag(prefix, version, branch, dryRun) {
     const { major, minor } = parseVersion(version);
     if (major === null || minor === null) {
       throw Error("can't parse version");
@@ -55,10 +54,10 @@ module.exports = function (tags) {
   /**
    * Process a component action.
    *
-   * @param prefix The componet prefix (eg. comp1-).
+   * @param prefix The component prefix (eg. comp1-).
    * @param type The type of execution (TYPE_FIX, TYPE_FINAL)
    * @param currentTag The component actual version (eg comp-v3.4).
-   * @param branch Then brach in which to create the tag.
+   * @param branch Then branch in which to create the tag.
    * @param dryRun If the execution should be real.
    * @returns {String} The tag name created for the component.
    */
