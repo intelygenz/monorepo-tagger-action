@@ -1,0 +1,46 @@
+name: 'action-monorepo-version-tags-lifecycle'
+description: 'Generate version tags on a monorepo with multiple components'
+branding:
+  icon: 'tag'
+  color: 'gray-dark'
+
+inputs:
+  mode:
+    description: 'Execution mode can be "product" "component" or "query"'
+    required: true
+  type:
+    description: 'Execution type can be "pre-release" "release" "fix" "final" "new-release-branch"'
+    required: true
+  current-tag:
+    description: '"Current tag of a component, e.g. "component-v0.4.0"'
+    required: false
+    default: 'v0.0.0'
+  current-major:
+    description: '"Current product major version'
+    required: false
+    default: '0'
+  component-prefix:
+    description: 'Component prefix, e.g. "hello-"'
+    required: false
+  release-branch-prefix:
+    description: 'Release branch prefix, e.g. "release/v"'
+    required: false
+  pre-release-name:
+    description: 'A pre release name, e.g. "alpha" or "rc"'
+    required: false
+  default-branch:
+    description: '"Default branch to create a version tag, e.g. "main"'
+    required: false
+    default: 'main'
+  dry-run:
+    description: 'Enable dry run mode, e.g. "true" or "false"'
+    required: false
+    default: 'false'
+
+outputs:
+  tag:
+    description: 'The new version tag that was created'
+
+runs:
+  using: 'node12'
+  main: 'dist/index.js'
