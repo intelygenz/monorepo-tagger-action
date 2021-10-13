@@ -58,18 +58,6 @@ the branch you can restore it from the release tag created.
     current-tag: ${{ steps.component_version.outputs.TAG }}
 ```
 
-### Component Fix
-
-```yaml
-- name: Generate a fix tag for Component1
-  uses: intelygenz/action-monorepo-version-tags-lifecycle@1.0
-  with:
-    mode: 'component'
-    type: 'fix'
-    component-prefix: 'comp1-'
-    current-tag: ${{ steps.component_version.outputs.TAG }}
-```
-
 ### Product PreRelease  
 
 ```yaml
