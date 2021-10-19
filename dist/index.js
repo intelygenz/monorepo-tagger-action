@@ -8681,7 +8681,7 @@ const releaseBranchPrefix = core.getInput('release-branch-prefix');
 const preReleaseName = core.getInput('pre-release-name');
 const type = core.getInput('type');
 const mode = core.getInput('mode');
-const defaultBranch = core.getInput('default-branch');
+const tagBranch = core.getInput('tag-branch');
 const currentComponentTag = core.getInput('current-tag');
 const currentMajor = core.getInput('current-major');
 
@@ -8696,7 +8696,7 @@ try {
     mode,
     type,
     dryRun,
-    defaultBranch,
+    tagBranch,
     currentComponentTag,
     currentMajor,
     preReleaseName,
@@ -8889,7 +8889,7 @@ const newTagger = __webpack_require__(1123);
 const newBranches = __webpack_require__(7972);
 const newComponents = __webpack_require__(1212);
 const newProduct = __webpack_require__(9031);
-const { MODE_COMPONENT, MODE_PRODUCT, MODE_QUERY } = __webpack_require__(8154);
+const { MODE_COMPONENT, MODE_PRODUCT } = __webpack_require__(8154);
 
 /**
  * Runs an action based on the mode and the type.
@@ -8904,7 +8904,7 @@ async function run(
     mode,
     type,
     dryRun,
-    defaultBranch,
+    tagBranch,
     currentComponentTag,
     currentMajor,
     preReleaseName,
@@ -8923,7 +8923,7 @@ async function run(
     mode,
     type,
     dryRun,
-    defaultBranch,
+    tagBranch,
     currentComponentTag,
     currentMajor,
     preReleaseName,
@@ -8934,24 +8934,12 @@ async function run(
   let tag;
 
   switch (mode) {
-    case MODE_QUERY:
-      tag = await tags.getLastTagWithPrefix(componentPrefix);
-
-      if (!tag) {
-        core.setFailed('Tag not found');
-        return;
-      }
-
-      console.log(`Found tag '${tag}'.`);
-
-      break;
-
     case MODE_COMPONENT:
       tag = await components.processComponent({
         prefix: componentPrefix,
         type,
         currentTag: currentComponentTag,
-        branch: defaultBranch,
+        branch: tagBranch,
         dryRun,
       });
 
@@ -8968,7 +8956,7 @@ async function run(
         type,
         preReleaseName,
         currentMajor,
-        branch: defaultBranch,
+        branch: tagBranch,
         dryRun,
       });
 
@@ -9178,7 +9166,6 @@ module.exports = {
   TYPE_NEW_RELEASE_BRANCH: 'new-release-branch',
   MODE_COMPONENT: 'component',
   MODE_PRODUCT: 'product',
-  MODE_QUERY: 'query',
 };
 
 
