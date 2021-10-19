@@ -4,6 +4,5 @@ module.exports = {
   TYPE_PRE_RELEASE: 'pre-release',
   TYPE_NEW_RELEASE_BRANCH: 'new-release-branch',
   MODE_COMPONENT: 'component',
-  MODE_PRODUCT: 'product',
-  MODE_QUERY: 'query',
+  MODE_PRODUCT: 'product'
 };

@@ -3,7 +3,7 @@ const newTagger = require('./tags');
 const newBranches = require('./branches');
 const newComponents = require('./components');
 const newProduct = require('./product');
-const { MODE_COMPONENT, MODE_PRODUCT, MODE_QUERY } = require('./types');
+const { MODE_COMPONENT, MODE_PRODUCT } = require('./types');
 
 /**
  * Runs an action based on the mode and the type.
