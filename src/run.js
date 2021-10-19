@@ -48,18 +48,6 @@ async function run(
   let tag;
 
   switch (mode) {
-    case MODE_QUERY:
-      tag = await tags.getLastTagWithPrefix(componentPrefix);
-
-      if (!tag) {
-        core.setFailed('Tag not found');
-        return;
-      }
-
-      console.log(`Found tag '${tag}'.`);
-
-      break;
-
     case MODE_COMPONENT:
       tag = await components.processComponent({
         prefix: componentPrefix,

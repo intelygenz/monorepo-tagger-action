@@ -102,14 +102,3 @@ the branch you can restore it from the release tag created.
     type: 'fix'
     release-branch-prefix: "release/v"
 ```
-
-### Query component last tag
-
-```yaml
-- name: Get Component1 last tag
-  uses: intelygenz/monorepo-tagger-action@v1.0
-  with:
-    mode: 'query'
-    type: 'component-last-version'
-    component-prefix: "comp1-"
-```

@@ -6,7 +6,7 @@ branding:
 
 inputs:
   mode:
-    description: 'Execution mode can be "product" "component" or "query"'
+    description: 'Execution mode can be "product" "component"'
     required: true
   type:
     description: 'Execution type can be "pre-release" "release" "fix" "final" "new-release-branch"'
