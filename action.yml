@@ -28,8 +28,8 @@ inputs:
   pre-release-name:
     description: 'A pre release name, e.g. "alpha" or "rc"'
     required: false
-  default-branch:
-    description: '"Default branch to create a version tag, e.g. "main"'
+  tag-branch:
+    description: '"Branch to create a version tag, e.g. "main"'
     required: false
     default: 'main'
   dry-run:

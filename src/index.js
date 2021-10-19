@@ -10,7 +10,7 @@ const releaseBranchPrefix = core.getInput('release-branch-prefix');
 const preReleaseName = core.getInput('pre-release-name');
 const type = core.getInput('type');
 const mode = core.getInput('mode');
-const defaultBranch = core.getInput('default-branch');
+const tagBranch = core.getInput('tag-branch');
 const currentComponentTag = core.getInput('current-tag');
 const currentMajor = core.getInput('current-major');
 
@@ -25,7 +25,7 @@ try {
     mode,
     type,
     dryRun,
-    defaultBranch,
+    tagBranch,
     currentComponentTag,
     currentMajor,
     preReleaseName,

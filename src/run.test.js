@@ -109,7 +109,7 @@ describe('mode component', () => {
       componentPrefix: 'hello-',
       mode: 'component',
       type: 'final',
-      defaultBranch: 'main',
+      tagBranch: 'main',
       dryRun: false,
     };
 
@@ -205,7 +205,7 @@ describe('mode product', () => {
       dryRun: false,
       releaseBranchPrefix: 'release/v',
       currentMajor: '0',
-      defaultBranch: 'main',
+      tagBranch: 'main',
       preReleaseName: 'rc',
     };
 
@@ -230,7 +230,7 @@ describe('mode product', () => {
       dryRun: false,
       releaseBranchPrefix: 'release/v',
       currentMajor: '0',
-      defaultBranch: 'main',
+      tagBranch: 'main',
       preReleaseName: 'rc',
     };
 
@@ -254,7 +254,7 @@ describe('mode product', () => {
       mode: 'product',
       type: 'new-release-branch',
       dryRun: false,
-      defaultBranch: 'main',
+      tagBranch: 'main',
       currentComponentTag: 'component-v0.0.0',
       currentMajor: 0,
       preReleaseName: '',

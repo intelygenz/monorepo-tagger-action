@@ -18,7 +18,7 @@ async function run(
     mode,
     type,
     dryRun,
-    defaultBranch,
+    tagBranch,
     currentComponentTag,
     currentMajor,
     preReleaseName,
@@ -37,7 +37,7 @@ async function run(
     mode,
     type,
     dryRun,
-    defaultBranch,
+    tagBranch,
     currentComponentTag,
     currentMajor,
     preReleaseName,
@@ -65,7 +65,7 @@ async function run(
         prefix: componentPrefix,
         type,
         currentTag: currentComponentTag,
-        branch: defaultBranch,
+        branch: tagBranch,
         dryRun,
       });
 
@@ -82,7 +82,7 @@ async function run(
         type,
         preReleaseName,
         currentMajor,
-        branch: defaultBranch,
+        branch: tagBranch,
         dryRun,
       });
 
