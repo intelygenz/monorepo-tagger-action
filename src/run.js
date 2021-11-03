@@ -3,7 +3,8 @@ const newTagger = require('./tags');
 const newBranches = require('./branches');
 const newComponents = require('./components');
 const newProduct = require('./product');
-const { MODE_COMPONENT, MODE_PRODUCT } = require('./types');
+const { MODE_COMPONENT, MODE_PRODUCT, TYPE_FIX, TYPE_NEW_RELEASE_BRANCH } = require('./types');
+const github = require('@actions/github');
 
 /**
  * Runs an action based on the mode and the type.
@@ -45,46 +46,49 @@ async function run(
 
   console.log('Options for the action', options);
 
+  if (type === TYPE_NEW_RELEASE_BRANCH) {
+    const lastPreReleaseTag = await tags.getLastPreReleaseTag();
+    const branch = await branches.createNewReleaseBranch(lastPreReleaseTag, releaseBranchPrefix, dryRun);
+    core.setOutput('tag', branch);
+    return branch;
+  }
+
   let tag;
+  let branchToTag = tagBranch;
+
+  if (type === TYPE_FIX) {
+    branchToTag = github.context.ref.replace('refs/heads/', '');
+  }
 
   switch (mode) {
     case MODE_COMPONENT:
-      tag = await components.processComponent({
+      tag = await components.getComponentTag({
         prefix: componentPrefix,
         type,
         currentTag: currentComponentTag,
-        branch: tagBranch,
-        dryRun,
       });
-
-      if (!tag) {
-        return core.setFailed('Tag creation failed');
-      }
-      console.log(`🚀 New component tag '${tag}' created`);
-
       break;
-
     case MODE_PRODUCT:
       tag = await product.processProduct({
         releaseBranchPrefix,
         type,
         preReleaseName,
         currentMajor,
-        branch: tagBranch,
-        dryRun,
       });
-
-      if (!tag) {
-        return core.setFailed('Tag creation failed');
-      }
-
-      console.log(`🚀 New product tag '${tag}' created`);
-
       break;
-
     default:
       return core.setFailed(`Unknown mode "${mode}"`);
   }
+
+  if (!tag) {
+    return core.setFailed('Tag creation failed');
+  }
+
+  if (!dryRun) {
+    await tags.createTag(tag, branchToTag);
+    console.log(`🚀 New tag '${tag}' created in ${branchToTag}`);
+  }
+
   core.setOutput('tag', tag);
 }
 

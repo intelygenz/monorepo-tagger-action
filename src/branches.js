@@ -1,6 +1,39 @@
 const github = require('@actions/github');
+const core = require('@actions/core');
+const { parseVersion } = require('./strings');
 
 module.exports = function (octokit, owner, repo) {
+  /**
+   * Creates a new release branch.
+   *
+   * The release branch name is based on existing pre-release tags.
+   * If the last pre-release tag in the repo is v3.5-rc.4 the release branch will be '${releaseBranchPrefix}3.5'.
+   *
+   * @param releaseBranchPrefix The prefix for the release branch.
+   * @param dryRun If the execution should be real.
+   * @returns {String} The created branch name.
+   */
+  async function createNewReleaseBranch(lastPreReleaseTag, releaseBranchPrefix, dryRun) {
+    const tag = lastPreReleaseTag;
+    if (!tag) {
+      return core.setFailed('There are any pre-release yet');
+    }
+
+    const { major, minor } = parseVersion(tag);
+
+    const releaseBranch = `${releaseBranchPrefix}${major}.${minor}`;
+    if (!dryRun) {
+      const created = await createBranch(releaseBranch);
+
+      if (!created) {
+        return core.setFailed(`The release branch '${releaseBranch}' already exist`);
+      }
+    }
+
+    console.log(`🚀 New release '${releaseBranch}' created`);
+    return releaseBranch;
+  }
+
   async function getAllBranchesNames() {
     let branchNames = [];
     let data_length = 0;
@@ -88,6 +121,7 @@ module.exports = function (octokit, owner, repo) {
 
   return {
     createBranch,
+    createNewReleaseBranch,
     calcPreReleaseVersionBasedOnReleaseBranches,
   };
 };

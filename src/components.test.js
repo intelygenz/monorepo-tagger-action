@@ -24,12 +24,10 @@ describe('components module', () => {
     tags.createTag.mockReturnValue(expectedTag);
 
     // WHEN the component action is processed
-    const tag = await components.processComponent({ prefix, type, currentTag, branch: null, dryRun: false });
+    const tag = await components.getComponentTag({ prefix, type, currentTag, branch: null, dryRun: false });
 
     // THEN the created tag is expectedTag
     expect(tag).toBe(expectedTag);
-    expect(tags.createTag).toHaveBeenCalledTimes(1);
-    expect(tags.createTag).toHaveBeenCalledWith(expectedTag, 'release/v0.1');
   });
 
   test('createComponentTag FINAL', async () => {
@@ -47,13 +45,11 @@ describe('components module', () => {
     tags.createTag.mockReturnValue(expectedTag);
 
     // WHEN the component action is processed
-    const tag = await components.processComponent({ prefix, type, branch, dryRun: false });
+    const tag = await components.getComponentTag({ prefix, type, branch, dryRun: false });
 
     // THEN the tag is as expected
     expect(tag).toBe(expectedTag);
     expect(tags.getLastTagWithPrefix).toHaveBeenCalledTimes(1);
     expect(tags.getLastTagWithPrefix).toHaveBeenCalledWith(prefix);
-    expect(tags.createTag).toHaveBeenCalledTimes(1);
-    expect(tags.createTag).toHaveBeenCalledWith(expectedTag, branch);
   });
 });
