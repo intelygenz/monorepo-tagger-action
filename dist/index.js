@@ -8478,8 +8478,41 @@ function wrappy (fn, cb) {
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const github = __webpack_require__(5438);
+const core = __webpack_require__(2186);
+const { parseVersion } = __webpack_require__(1153);
 
 module.exports = function (octokit, owner, repo) {
+  /**
+   * Creates a new release branch.
+   *
+   * The release branch name is based on existing pre-release tags.
+   * If the last pre-release tag in the repo is v3.5-rc.4 the release branch will be '${releaseBranchPrefix}3.5'.
+   *
+   * @param releaseBranchPrefix The prefix for the release branch.
+   * @param dryRun If the execution should be real.
+   * @returns {String} The created branch name.
+   */
+  async function createNewReleaseBranch(lastPreReleaseTag, releaseBranchPrefix, dryRun) {
+    const tag = lastPreReleaseTag;
+    if (!tag) {
+      return core.setFailed('There are any pre-release yet');
+    }
+
+    const { major, minor } = parseVersion(tag);
+
+    const releaseBranch = `${releaseBranchPrefix}${major}.${minor}`;
+    if (!dryRun) {
+      const created = await createBranch(releaseBranch);
+
+      if (!created) {
+        return core.setFailed(`The release branch '${releaseBranch}' already exist`);
+      }
+    }
+
+    console.log(`🚀 New release '${releaseBranch}' created`);
+    return releaseBranch;
+  }
+
   async function getAllBranchesNames() {
     let branchNames = [];
     let data_length = 0;
@@ -8567,6 +8600,7 @@ module.exports = function (octokit, owner, repo) {
 
   return {
     createBranch,
+    createNewReleaseBranch,
     calcPreReleaseVersionBasedOnReleaseBranches,
   };
 };
@@ -8577,57 +8611,38 @@ module.exports = function (octokit, owner, repo) {
 /***/ 1212:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const github = __webpack_require__(5438);
 const { parseVersion } = __webpack_require__(1153);
 
 const { TYPE_FIX, TYPE_FINAL } = __webpack_require__(8154);
 
 module.exports = function (tags) {
   /**
-   * Creates a fix tag for the component.
+   * Computes a fix tag for the component.
    *
    * The tag is calculated based on actual compoment version.
    *
    * @param prefix The component prefix.
    * @param version The component actual version (eg 3.4).
-   * @param branch Then branch in which to create the tag.
-   * @param dryRun If the execution should be real.
    * @returns {String} The created tag name.
    */
-  async function createFixTag(prefix, version, branch, dryRun) {
+  async function computeFixTag(prefix, version) {
     const { major, minor, patch } = parseVersion(version);
-    const releaseTag = `${prefix}v${major}.${minor}.${patch + 1}`;
-
-    if (!dryRun) {
-      await tags.createTag(releaseTag, branch);
-    }
-
-    return releaseTag;
+    return `${prefix}v${major}.${minor}.${patch + 1}`;
   }
 
   /**
-   * Creates a final tag for the component.
+   * Computes a final tag for the component.
    *
    * @param prefix The component prefix.
    * @param version The component actual version (eg 3.4).
-   * @param branch Then branch in which to create the tag.
-   * @param dryRun If the execution should be real.
    * @returns {String} The created tag name.
    */
-  async function createFinalTag(prefix, version, branch, dryRun) {
+  async function computeFinalTag(prefix, version) {
     const { major, minor } = parseVersion(version);
     if (major === null || minor === null) {
       throw Error("can't parse version");
     }
-    const releaseTag = `${prefix}v${major}.${minor + 1}.0`;
-
-    if (!dryRun) {
-      console.log(`Creating tag ${releaseTag} on branch: ${branch}`);
-
-      await tags.createTag(releaseTag, branch);
-    }
-
-    return releaseTag;
+    return `${prefix}v${major}.${minor + 1}.0`;
   }
 
   /**
@@ -8636,30 +8651,23 @@ module.exports = function (tags) {
    * @param prefix The component prefix (eg. comp1-).
    * @param type The type of execution (TYPE_FIX, TYPE_FINAL)
    * @param currentTag The component actual version (eg comp-v3.4).
-   * @param branch Then branch in which to create the tag.
-   * @param dryRun If the execution should be real.
    * @returns {String} The tag name created for the component.
    */
-  async function processComponent({ prefix, type, currentTag, branch, dryRun }) {
+  async function getComponentTag({ prefix, type, currentTag }) {
     if (type === TYPE_FIX) {
       const version = currentTag.replace(`${prefix}`, '');
-      const releaseBranch = github.context.payload.ref.replace('refs/heads/', '');
-      console.log(
-        `Creating fix for version ${version} on branch ${releaseBranch} (ref: ${github.context.payload.ref})`
-      );
-      return createFixTag(prefix, version, releaseBranch, dryRun);
+      return computeFixTag(prefix, version);
     }
 
     if (type === TYPE_FINAL) {
       const lastTag = await tags.getLastTagWithPrefix(prefix);
       const version = lastTag.replace(prefix, '');
-      console.log(`Create final tag with prefix ${prefix} for version ${version} on branch ${branch}`);
-      return createFinalTag(prefix, version, branch, dryRun);
+      return computeFinalTag(prefix, version);
     }
   }
 
   return {
-    processComponent,
+    getComponentTag,
   };
 };
 
@@ -8711,103 +8719,28 @@ try {
 /***/ 9031:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const core = __webpack_require__(2186);
 const github = __webpack_require__(5438);
 
-const { TYPE_PRE_RELEASE, TYPE_NEW_RELEASE_BRANCH, TYPE_FIX, TYPE_FINAL } = __webpack_require__(8154);
+const { TYPE_PRE_RELEASE, TYPE_FIX, TYPE_FINAL } = __webpack_require__(8154);
 const { parseVersion } = __webpack_require__(1153);
 
 module.exports = function (tags, branches) {
   /**
-   * Creates a new release branch.
-   *
-   * The release branch name is based on existing pre-release tags.
-   * If the last pre-release tag in the repo is v3.5-rc.4 the release branch will be '${releaseBranchPrefix}3.5'.
-   *
-   * @param releaseBranchPrefix The prefix for the release branch.
-   * @param dryRun If the execution should be real.
-   * @returns {String} The created branch name.
-   */
-  async function createNewReleaseBranch(releaseBranchPrefix, dryRun) {
-    const tag = await tags.getLastPreReleaseTag();
-    if (!tag) {
-      return core.setFailed('There are any pre-release yet');
-    }
-
-    const { major, minor } = parseVersion(tag);
-
-    const releaseBranch = `${releaseBranchPrefix}${major}.${minor}`;
-    if (!dryRun) {
-      const created = await branches.createBranch(releaseBranch);
-
-      if (!created) {
-        return core.setFailed(`The release branch '${releaseBranch}' already exist`);
-      }
-    }
-
-    console.log(`🚀 New release '${releaseBranch}' created`);
-    return releaseBranch;
-  }
-
-  /**
-   * Creates a final tag for the product.
+   * Compute a final tag for the product.
    *
    * The final tag is calculated based on existing pre-release tags.
    * If the last pre-release tag in the repo is v3.5-rc.4 the final tag will be 'v3.5.0'.
    *
-   * @param releaseBranch The branch in which the final tag will be made.
-   * @param dryRun If the execution should be real.
    * @returns {String} The created tag name.
    */
-  async function createProductFinalTag(releaseBranch, dryRun) {
-    if (!releaseBranch) {
-      return core.setFailed('You need to specify the release branch to tag');
-    }
-
+  async function computeProductFinalTag() {
     const tag = await tags.getLastPreReleaseTag();
-    if (!tag) {
-      return core.setFailed('There are any pre-release yet');
-    }
-    console.log(`Create release tag in branch ${releaseBranch}`);
-
     const { major, minor } = parseVersion(tag);
-
-    const releaseTag = `v${major}.${minor}.0`;
-    if (!dryRun) {
-      await tags.createTag(releaseTag, releaseBranch);
-    }
-
-    console.log(`🚀 New release tag '${releaseTag}' created`);
-
-    return releaseTag;
+    return `v${major}.${minor}.0`;
   }
 
   /**
-   * Creates a pre-release tag for the product.
-   *
-   * The tag is calculated based on the pre-release version.
-   * If we are working with the pre-release version v2.4, then we check for the greater tags
-   * in v2.4-rc.X and creates the pre-release tag for the next pre-release.
-   *
-   * @param releaseBranchPrefix The prefix for the release branch.
-   * @param preReleaseVersion The version for the current pre-release.
-   * @param preReleaseName The name of the pre-release.
-   * @param branch The name of the branch in which to create the tag.
-   * @param dryRun If the execution should be real.
-   * @returns {String} The created tag name.
-   */
-  async function createProductPreReleaseTag(releaseBranchPrefix, preReleaseVersion, preReleaseName, branch, dryRun) {
-    const preReleaseTag = await tags.calcPrereleaseTag(preReleaseVersion, preReleaseName);
-
-    if (!dryRun) {
-      await tags.createTag(preReleaseTag, branch);
-    }
-
-    return preReleaseTag;
-  }
-
-  /**
-   * Create a fix tag for the product.
+   * Compute a fix tag for the product.
    *
    * The tag is calculated based on the release version that needs to be fixed.
    * If we are going to create the fix tag in the branch 'release/v2.4', then we check for the greater
@@ -8815,25 +8748,13 @@ module.exports = function (tags, branches) {
    *
    * @param releaseBranchPrefix The prefix for the release branch.
    * @param currentBranchName The release branch where the fix tag should be made.
-   * @param dryRun If the execution should be real.
    * @returns {String} The created tag name.
    */
-  async function createProductFixTag(releaseBranchPrefix, currentBranchName, dryRun) {
+  async function computeProductFixTag(releaseBranchPrefix, currentBranchName) {
     const releaseVersion = currentBranchName.replace(releaseBranchPrefix, '');
     const tag = await tags.getLatestTagFromReleaseVersion(releaseVersion);
-    if (!tag) {
-      return core.setFailed('There are any release yet');
-    }
-
     const { major, minor, patch } = parseVersion(tag);
-
-    const fixTag = `v${major}.${minor}.${patch + 1}`;
-    if (!dryRun) {
-      await tags.createTag(fixTag, currentBranchName);
-    }
-
-    console.log(`🚀 New fix '${fixTag}' created`);
-    return fixTag;
+    return `v${major}.${minor}.${patch + 1}`;
   }
 
   /**
@@ -8843,21 +8764,15 @@ module.exports = function (tags, branches) {
    * @param type The type of execution (TYPE_FINAL, TYPE_PRE_RELEASE, TYPE_FIX, TYPE_NEW_RELEASE_BRANCH).
    * @param preReleaseName The name of the pre-release.
    * @param currentMajor The actual major version.
-   * @param branch The branch in which the tag needs to be made.
-   * @param dryRun If the execution should be real.
    * @returns {String} The tag name created for the product.
    */
-  async function processProduct({ releaseBranchPrefix, type, preReleaseName, currentMajor, branch, dryRun }) {
+  async function processProduct({ releaseBranchPrefix, type, preReleaseName, currentMajor }) {
     if (type === TYPE_PRE_RELEASE) {
       const preReleaseVersion = await branches.calcPreReleaseVersionBasedOnReleaseBranches(
         currentMajor,
         releaseBranchPrefix
       );
-      return createProductPreReleaseTag(releaseBranchPrefix, preReleaseVersion, preReleaseName, branch, dryRun);
-    }
-
-    if (type === TYPE_NEW_RELEASE_BRANCH) {
-      return createNewReleaseBranch(releaseBranchPrefix, dryRun);
+      return tags.calcPrereleaseTag(preReleaseVersion, preReleaseName);
     }
 
     if (type === TYPE_FIX) {
@@ -8865,11 +8780,11 @@ module.exports = function (tags, branches) {
       if (github.context.payload) {
         currentBranchName = github.context.payload.workflow_run.head_branch;
       }
-      return createProductFixTag(releaseBranchPrefix, currentBranchName, dryRun);
+      return computeProductFixTag(releaseBranchPrefix, currentBranchName);
     }
 
     if (type === TYPE_FINAL) {
-      return createProductFinalTag(branch, dryRun);
+      return computeProductFinalTag();
     }
   }
 
@@ -8889,7 +8804,8 @@ const newTagger = __webpack_require__(1123);
 const newBranches = __webpack_require__(7972);
 const newComponents = __webpack_require__(1212);
 const newProduct = __webpack_require__(9031);
-const { MODE_COMPONENT, MODE_PRODUCT } = __webpack_require__(8154);
+const { MODE_COMPONENT, MODE_PRODUCT, TYPE_FIX, TYPE_NEW_RELEASE_BRANCH } = __webpack_require__(8154);
+const github = __webpack_require__(5438);
 
 /**
  * Runs an action based on the mode and the type.
@@ -8931,46 +8847,49 @@ async function run(
 
   console.log('Options for the action', options);
 
+  if (type === TYPE_NEW_RELEASE_BRANCH) {
+    const lastPreReleaseTag = await tags.getLastPreReleaseTag();
+    const branch = await branches.createNewReleaseBranch(lastPreReleaseTag, releaseBranchPrefix, dryRun);
+    core.setOutput('tag', branch);
+    return branch;
+  }
+
   let tag;
+  let branchToTag = tagBranch;
+
+  if (type === TYPE_FIX) {
+    branchToTag = github.context.ref.replace('refs/heads/', '');
+  }
 
   switch (mode) {
     case MODE_COMPONENT:
-      tag = await components.processComponent({
+      tag = await components.getComponentTag({
         prefix: componentPrefix,
         type,
         currentTag: currentComponentTag,
-        branch: tagBranch,
-        dryRun,
       });
-
-      if (!tag) {
-        return core.setFailed('Tag creation failed');
-      }
-      console.log(`🚀 New component tag '${tag}' created`);
-
       break;
-
     case MODE_PRODUCT:
       tag = await product.processProduct({
         releaseBranchPrefix,
         type,
         preReleaseName,
         currentMajor,
-        branch: tagBranch,
-        dryRun,
       });
-
-      if (!tag) {
-        return core.setFailed('Tag creation failed');
-      }
-
-      console.log(`🚀 New product tag '${tag}' created`);
-
       break;
-
     default:
       return core.setFailed(`Unknown mode "${mode}"`);
   }
+
+  if (!tag) {
+    return core.setFailed('Tag creation failed');
+  }
+
+  if (!dryRun) {
+    await tags.createTag(tag, branchToTag);
+    console.log(`🚀 New tag '${tag}' created in ${branchToTag}`);
+  }
+
   core.setOutput('tag', tag);
 }
 
