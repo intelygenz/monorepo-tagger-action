@@ -75,9 +75,7 @@ describe('mode component', () => {
       currentComponentTag: 'hello-v0.98.0',
     };
 
-    github.context.payload = {
-      ref: 'refs/heads/release/v0.22',
-    };
+    github.context.ref = 'refs/heads/release/v0.22';
 
     await run(octokitMock, owner, repo, params);
 
@@ -183,7 +181,7 @@ describe('mode product', () => {
     expect(core.setOutput).toHaveBeenCalledWith('tag', 'v0.24-rc.0');
   });
 
-  test('generate-prerelease', async () => {
+  test('generate-new-release-branch', async () => {
     /*
         // debug with real octokit object
         const octokit = github.getOctokit(process.env.GITHUB_TOKEN);
