@@ -29,9 +29,25 @@ inputs:
     description: 'A pre release name, e.g. "alpha" or "rc"'
     required: false
   tag-branch:
-    description: '"Branch to create a version tag, e.g. "main"'
+    description: 'Branch to create a version tag, e.g. "main"'
     required: false
     default: 'main'
+  update-versions-in:
+    description: 'String representation of an array of objects with file/property keys. If provided the action will update those files/properties with the version that is being released.'
+    required: false
+    default: false
+  commit-message:
+    description: 'The message in the commit for version updates.'
+    required: false
+    default: 'Update version file [skip-ci]'
+  commit-author:
+    description: 'The author for the commit in the version updates.'
+    required: false
+    default: 'Tagger Action'
+  commit-author-email:
+    description: 'The author email for the commit in the version updates.'
+    required: false
+    default: 'tagger-action@automated.com'
   dry-run:
     description: 'Enable dry run mode, e.g. "true" or "false"'
     required: false

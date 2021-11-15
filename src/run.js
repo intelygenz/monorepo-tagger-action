@@ -2,6 +2,7 @@ const core = require('@actions/core');
 const newTagger = require('./tags');
 const newBranches = require('./branches');
 const newComponents = require('./components');
+const newVersionFileUpdater = require('./version-file-updater');
 const newProduct = require('./product');
 const { MODE_COMPONENT, MODE_PRODUCT, TYPE_FIX, TYPE_NEW_RELEASE_BRANCH } = require('./types');
 const github = require('@actions/github');
@@ -23,12 +24,17 @@ async function run(
     currentComponentTag,
     currentMajor,
     preReleaseName,
+    updateVersionsIn,
+    commitMessage,
+    commitAuthor,
+    commitAuthorEmail,
   }
 ) {
   const tags = newTagger(octokit, owner, repo);
   const branches = newBranches(octokit, owner, repo);
   const components = newComponents(tags);
   const product = newProduct(tags, branches);
+  const versionFileUpdater = newVersionFileUpdater();
 
   console.log(`Run action with params: mode ${mode} and type ${type}`);
 
@@ -42,6 +48,10 @@ async function run(
     currentComponentTag,
     currentMajor,
     preReleaseName,
+    updateVersionsIn,
+    commitMessage,
+    commitAuthor,
+    commitAuthorEmail,
   };
 
   console.log('Options for the action', options);
@@ -85,6 +95,19 @@ async function run(
   }
 
   if (!dryRun) {
+    // update version filess before the tag is made
+    if (updateVersionsIn != false) {
+      await versionFileUpdater.updateVersionInFileAndCommit(
+        updateVersionsIn,
+        tag,
+        branchToTag,
+        commitMessage,
+        commitAuthor,
+        commitAuthorEmail
+      );
+      console.log(`Version updated in file(s)`);
+    }
+
     await tags.createTag(tag, branchToTag);
     console.log(`🚀 New tag '${tag}' created in ${branchToTag}`);
   }
