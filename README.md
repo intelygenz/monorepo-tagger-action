@@ -33,6 +33,30 @@ is ready for the next release, then a new `release` branch is created and a new 
 The `release` branch can be deleted, or it can live for as long as you need to give support to that release. If you delete
 the branch you can restore it from the release tag created.
 
+
+### Updating Version Files
+
+When creating a new tag in the repository you can update version files with the new version being released. Only `yaml` files are supported.
+
+To update a version file when creating a new tag you can specify it in the input parameters:
+
+```yaml
+- name: Generate a release tag for Component1
+  uses: intelygenz/monorepo-tagger-action@v1.0
+  with:
+    mode: 'component'
+    type: 'final'
+    component-prefix: "comp1-"
+    update-versions-in: '[{"file": "metaapp/values.yaml", "property": "helloWorld.tag"}]'
+    commit-message: 'My custom commit message'
+    commit-author: 'Me'
+    commit-author-email: 'me@company.com'
+```
+
+### Action inputs
+
+Action inputs are documented in [action.yml file](action.yml)
+
 ## Action Modes
 
 ### Component Release
