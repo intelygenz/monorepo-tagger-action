@@ -47,7 +47,7 @@ inputs:
   commit-author-email:
     description: 'The author email for the commit in the version updates.'
     required: false
-    default: 'tagger-action@automated.com'
+    default: 'no-reply-tagger-action@igz.es'
   dry-run:
     description: 'Enable dry run mode, e.g. "true" or "false"'
     required: false
