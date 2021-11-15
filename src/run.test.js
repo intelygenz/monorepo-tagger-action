@@ -8,6 +8,15 @@ const { run } = require('./run');
 describe('mode component', () => {
   let octokitMock, owner, repo;
 
+  const params = {
+    componentPrefix: 'hello-',
+    mode: 'component',
+    type: 'final',
+    tagBranch: 'main',
+    dryRun: false,
+    updateVersionsIn: false,
+  };
+
   beforeEach(() => {
     [owner, repo] = 'test-org/test-repo'.split('/');
 
@@ -47,14 +56,6 @@ describe('mode component', () => {
         const [owner, repo] = 'intelygenz/monorepo-ci-cd-poc'.split('/');
         */
 
-    const params = {
-      componentPrefix: 'hello-',
-      mode: 'component',
-      type: 'final',
-      tagBranch: 'main',
-      dryRun: false,
-    };
-
     await run(octokitMock, owner, repo, params);
 
     expect(core.setFailed).toHaveBeenCalledTimes(0);
@@ -67,13 +68,8 @@ describe('mode component', () => {
     //const octokitMock = github.getOctokit(process.env.GITHUB_TOKEN);
     //const [owner, repo] = 'intelygenz/monorepo-ci-cd-poc'.split('/');
 
-    const params = {
-      componentPrefix: 'hello-',
-      mode: 'component',
-      type: 'fix',
-      dryRun: false,
-      currentComponentTag: 'hello-v0.98.0',
-    };
+    params.currentComponentTag = 'hello-v0.98.0';
+    params.type = 'fix';
 
     github.context.ref = 'refs/heads/release/v0.22';
 
@@ -92,6 +88,17 @@ describe('mode component', () => {
 
 describe('mode product', () => {
   let octokitMock, owner, repo;
+
+  const params = {
+    mode: 'product',
+    type: 'pre-release',
+    dryRun: false,
+    releaseBranchPrefix: 'release/v',
+    currentMajor: '0',
+    tagBranch: 'main',
+    preReleaseName: 'rc',
+    updateVersionsIn: false,
+  };
 
   beforeEach(() => {
     [owner, repo] = 'test-org/test-repo'.split('/');
@@ -138,17 +145,6 @@ describe('mode product', () => {
         const [owner, repo] = 'intelygenz/monorepo-ci-cd-poc'.split('/');
     
     */
-
-    const params = {
-      mode: 'product',
-      type: 'pre-release',
-      dryRun: false,
-      releaseBranchPrefix: 'release/v',
-      currentMajor: '0',
-      tagBranch: 'main',
-      preReleaseName: 'rc',
-    };
-
     await run(octokitMock, owner, repo, params);
 
     expect(core.setFailed).toHaveBeenCalledTimes(0);
@@ -164,16 +160,6 @@ describe('mode product', () => {
     
     */
 
-    const params = {
-      mode: 'product',
-      type: 'pre-release',
-      dryRun: false,
-      releaseBranchPrefix: 'release/v',
-      currentMajor: '0',
-      tagBranch: 'main',
-      preReleaseName: 'rc',
-    };
-
     await run(octokitMock, owner, repo, params);
 
     expect(core.setFailed).toHaveBeenCalledTimes(0);
@@ -188,17 +174,7 @@ describe('mode product', () => {
         const [owner, repo] = 'intelygenz/monorepo-ci-cd-poc'.split('/');
     */
 
-    const params = {
-      componentPrefix: '',
-      releaseBranchPrefix: 'release/v',
-      mode: 'product',
-      type: 'new-release-branch',
-      dryRun: false,
-      tagBranch: 'main',
-      currentComponentTag: 'component-v0.0.0',
-      currentMajor: 0,
-      preReleaseName: '',
-    };
+    params.type = 'new-release-branch';
 
     await run(octokitMock, owner, repo, params);
 
@@ -208,12 +184,7 @@ describe('mode product', () => {
   });
 
   test('calculate-fix-tag', async () => {
-    const params = {
-      mode: 'product',
-      type: 'fix',
-      releaseBranchPrefix: 'release/v',
-      dryRun: true,
-    };
+    params.type = 'fix';
 
     github.context.ref = 'refs/heads/main';
     github.context.payload = {
