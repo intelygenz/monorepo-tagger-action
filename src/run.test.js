@@ -1,6 +1,5 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
-const fs = require('fs');
 
 const { run } = require('./run');
 
@@ -200,42 +199,4 @@ describe('mode product', () => {
     expect(core.setOutput).toHaveBeenCalledTimes(1);
     expect(core.setOutput).toHaveBeenCalledWith('tag', 'v0.23.2');
   });
-
 });
-
-describe('version file updater', () => {
-  let octokitMock, owner, repo;
-
-  const params = {
-    componentPrefix: 'hello-',
-    mode: 'component',
-    type: 'final',
-    tagBranch: 'main',
-    dryRun: false,
-    updateVersionsIn: '[{"file": "test/file.yaml", "property": "app.tag" }]'
-  };
-
-  fs.writeFile = jest.fn();
-
-  test('component prefix is stripped from version file', async () => {
-    // GIVEN
-    octokitMock = {
-      repos: {
-        listTags: jest.fn().mockReturnValue({
-          data: [
-            {name: 'hello-v0.99.0'}
-          ],
-        })
-      }
-    };
-
-    // WHEN the updater is executed
-    await run(octokitMock, owner, repo, params);
-
-    // THEN the component prefix in the version file was stripped
-    expect(fs.writeFile).toHaveBeenCalledTimes(1);
-  });
-
-});
-
-
