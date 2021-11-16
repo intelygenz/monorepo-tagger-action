@@ -14,6 +14,7 @@ const tagBranch = core.getInput('tag-branch');
 const currentComponentTag = core.getInput('current-tag');
 const currentMajor = core.getInput('current-major');
 const updateVersionsIn = core.getInput('update-versions-in');
+const stripComponentPrefixFromTag = core.getInput('strip-component-from-tag');
 const commitMessage = core.getInput('commit-message');
 const commitAuthor = core.getInput('commit-author');
 const commitAuthorEmail = core.getInput('commit-author-email');
@@ -34,6 +35,7 @@ try {
     currentMajor,
     preReleaseName,
     updateVersionsIn,
+    stripComponentPrefixFromTag,
     commitMessage,
     commitAuthor,
     commitAuthorEmail,
