@@ -185,10 +185,29 @@ describe('mode product', () => {
     expect(core.setOutput).toHaveBeenCalledWith('tag', 'release/v0.4');
   });
 
-  test('calculate-fix-tag', async () => {
+  test('calculate-fix-tag with github.context.ref', async () => {
     params.type = 'fix';
 
-    github.context.ref = 'refs/heads/main';
+    github.context.ref = 'refs/heads/release/v0.23';
+    github.context.payload = {};
+
+    await run(octokitMock, owner, repo, params);
+
+    expect(core.setFailed).toHaveBeenCalledTimes(0);
+    expect(core.setOutput).toHaveBeenCalledTimes(1);
+    expect(core.setOutput).toHaveBeenCalledWith('tag', 'v0.23.2');
+
+    expect(octokitMock.repos.getBranch).toHaveBeenCalledWith({
+      branch: 'release/v0.23',
+      owner: 'test-org',
+      repo: 'test-repo',
+    });
+  });
+
+  test('calculate-fix-tag with github.context.payload.workflow_run', async () => {
+    params.type = 'fix';
+
+    github.context.ref = '';
     github.context.payload = {
       workflow_run: {
         head_branch: 'release/v0.23',
@@ -200,6 +219,12 @@ describe('mode product', () => {
     expect(core.setFailed).toHaveBeenCalledTimes(0);
     expect(core.setOutput).toHaveBeenCalledTimes(1);
     expect(core.setOutput).toHaveBeenCalledWith('tag', 'v0.23.2');
+
+    expect(octokitMock.repos.getBranch).toHaveBeenCalledWith({
+      branch: 'release/v0.23',
+      owner: 'test-org',
+      repo: 'test-repo',
+    });
   });
 });
 

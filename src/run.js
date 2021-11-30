@@ -70,6 +70,10 @@ async function run(
 
   if (type === TYPE_FIX) {
     branchToTag = github.context.ref.replace('refs/heads/', '');
+    if (github.context.payload && github.context.payload.workflow_run) {
+      // if executed from a workflow
+      branchToTag = github.context.payload.workflow_run.head_branch;
+    }
   }
 
   switch (mode) {
