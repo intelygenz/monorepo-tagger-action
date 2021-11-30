@@ -19,7 +19,7 @@ describe('product FIX', () => {
   test('creates the tag in the release branch when github.context.ref is present', async () => {
     const products = productMod(tags, branches);
 
-    // GIVEN an execution for a fix product with current context 'refs/heads/release-v1.0.0'
+    // GIVEN an execution for a fix product
     type = TYPE_FIX;
 
     // AND the execution branch in the ref is set
@@ -40,10 +40,10 @@ describe('product FIX', () => {
   test('creates the tag in the release branch when github.context.payload from workflow is present', async () => {
     const products = productMod(tags, branches);
 
-    // GIVEN an execution for a fix product with current context 'refs/heads/release-v1.0.0'
+    // GIVEN an execution for a fix product
     type = TYPE_FIX;
 
-    // AND the execution branch in the payload is set
+    // AND the execution branch in the workflow_run payload is set
     github.context.ref = '';
     github.context.payload = {
       workflow_run: {
