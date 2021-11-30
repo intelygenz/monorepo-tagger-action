@@ -17957,7 +17957,7 @@ module.exports = function (tags, branches) {
 
     if (type === TYPE_FIX) {
       let currentBranchName = github.context.ref.replace('refs/heads/', '');
-      if (github.context.payload) {
+      if (github.context.payload && github.context.payload.workflow_run) {
         currentBranchName = github.context.payload.workflow_run.head_branch;
       }
       return computeProductFixTag(releaseBranchPrefix, currentBranchName);
@@ -18051,6 +18051,10 @@ async function run(
 
   if (type === TYPE_FIX) {
     branchToTag = github.context.ref.replace('refs/heads/', '');
+    if (github.context.payload && github.context.payload.workflow_run) {
+      // if executed from a workflow
+      branchToTag = github.context.payload.workflow_run.head_branch;
+    }
   }
 
   switch (mode) {
