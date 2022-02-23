@@ -18088,7 +18088,9 @@ async function run(
 
   if (!dryRun) {
     // update version filess before the tag is made
-    if (updateVersionsIn != false) {
+    // default values from action inputs are strings, so we need to compare with a string
+    if (updateVersionsIn != 'false') {
+      console.log(`Update versions in files ${updateVersionsIn}`);
       await versionFileUpdater.updateVersionInFileAndCommit(
         updateVersionsIn,
         effectiveTag,
