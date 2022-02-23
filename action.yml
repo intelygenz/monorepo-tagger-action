@@ -35,11 +35,11 @@ inputs:
   update-versions-in:
     description: 'String representation of an array of objects with file/property keys. If provided the action will update those files/properties with the version that is being released.'
     required: false
-    default: false
+    default: 'false'
   strip-component-from-tag:
     description: 'If component prefix should be removed from the tag when returning it or using it in a version file'
     required: false
-    default: false
+    default: 'false'
   commit-message:
     description: 'The message in the commit for version updates.'
     required: false
@@ -59,6 +59,8 @@ inputs:
 
 outputs:
   tag:
+    description: 'The new version tag that was created'
+  version:
     description: 'The new version tag that was created'
 
 runs:
