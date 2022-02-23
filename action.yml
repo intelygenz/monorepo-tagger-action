@@ -60,6 +60,8 @@ inputs:
 outputs:
   tag:
     description: 'The new version tag that was created'
+  version:
+    description: 'The new version tag that was created'
 
 runs:
   using: 'node12'

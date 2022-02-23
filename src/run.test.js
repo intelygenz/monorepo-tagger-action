@@ -61,8 +61,16 @@ describe('mode component', () => {
     await run(octokitMock, owner, repo, params);
 
     expect(core.setFailed).toHaveBeenCalledTimes(0);
-    expect(core.setOutput).toHaveBeenCalledTimes(1);
+    expect(core.setOutput).toHaveBeenCalledTimes(2);
     expect(core.setOutput).toHaveBeenCalledWith('tag', 'hello-v0.100.0');
+  });
+
+  test('should output a version', async () => {
+    await run(octokitMock, owner, repo, params);
+
+    expect(core.setFailed).toHaveBeenCalledTimes(0);
+    expect(core.setOutput).toHaveBeenCalledTimes(2);
+    expect(core.setOutput).toHaveBeenCalledWith('version', '0.100.0');
   });
 
   test('create-fix-tag', async () => {
@@ -78,13 +86,24 @@ describe('mode component', () => {
     await run(octokitMock, owner, repo, params);
 
     expect(core.setFailed).toHaveBeenCalledTimes(0);
-    expect(core.setOutput).toHaveBeenCalledTimes(1);
+    expect(core.setOutput).toHaveBeenCalledTimes(2);
     expect(core.setOutput).toHaveBeenCalledWith('tag', 'hello-v0.98.1');
     expect(octokitMock.repos.getBranch).toHaveBeenCalledWith({
       branch: 'release/v0.22',
       owner: 'test-org',
       repo: 'test-repo',
     });
+  });
+
+  test('should output a version with strip component tag option', async () => {
+    params.stripComponentPrefixFromTag = true;
+
+    await run(octokitMock, owner, repo, params);
+
+    expect(core.setFailed).toHaveBeenCalledTimes(0);
+    expect(core.setOutput).toHaveBeenCalledTimes(2);
+    expect(core.setOutput).toHaveBeenCalledWith('tag', 'v0.98.1');
+    expect(core.setOutput).toHaveBeenCalledWith('version', '0.98.1');
   });
 });
 
@@ -150,7 +169,7 @@ describe('mode product', () => {
     await run(octokitMock, owner, repo, params);
 
     expect(core.setFailed).toHaveBeenCalledTimes(0);
-    expect(core.setOutput).toHaveBeenCalledTimes(1);
+    expect(core.setOutput).toHaveBeenCalledTimes(2);
     expect(core.setOutput).toHaveBeenCalledWith('tag', 'v0.24-rc.0');
   });
 
@@ -165,7 +184,7 @@ describe('mode product', () => {
     await run(octokitMock, owner, repo, params);
 
     expect(core.setFailed).toHaveBeenCalledTimes(0);
-    expect(core.setOutput).toHaveBeenCalledTimes(1);
+    expect(core.setOutput).toHaveBeenCalledTimes(2);
     expect(core.setOutput).toHaveBeenCalledWith('tag', 'v0.24-rc.0');
   });
 
@@ -194,7 +213,7 @@ describe('mode product', () => {
     await run(octokitMock, owner, repo, params);
 
     expect(core.setFailed).toHaveBeenCalledTimes(0);
-    expect(core.setOutput).toHaveBeenCalledTimes(1);
+    expect(core.setOutput).toHaveBeenCalledTimes(2);
     expect(core.setOutput).toHaveBeenCalledWith('tag', 'v0.23.2');
 
     expect(octokitMock.repos.getBranch).toHaveBeenCalledWith({
@@ -217,7 +236,7 @@ describe('mode product', () => {
     await run(octokitMock, owner, repo, params);
 
     expect(core.setFailed).toHaveBeenCalledTimes(0);
-    expect(core.setOutput).toHaveBeenCalledTimes(1);
+    expect(core.setOutput).toHaveBeenCalledTimes(2);
     expect(core.setOutput).toHaveBeenCalledWith('tag', 'v0.23.2');
 
     expect(octokitMock.repos.getBranch).toHaveBeenCalledWith({

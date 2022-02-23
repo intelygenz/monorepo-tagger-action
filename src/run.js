@@ -101,6 +101,7 @@ async function run(
   }
 
   let effectiveTag = tag;
+  let version = tag.replace(componentPrefix + 'v', '');
   if (stripComponentPrefixFromTag) {
     effectiveTag = tag.replace(componentPrefix, '');
   }
@@ -126,6 +127,7 @@ async function run(
   }
 
   core.setOutput('tag', effectiveTag);
+  core.setOutput('version', version);
 }
 
 module.exports = {
