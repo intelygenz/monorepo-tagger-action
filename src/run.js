@@ -126,7 +126,6 @@ async function run(
   }
 
   core.setOutput('tag', effectiveTag);
-  core.setOutput('version', effectiveTag.replace('v', ''));
 }
 
 module.exports = {

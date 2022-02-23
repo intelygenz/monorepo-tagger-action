@@ -16,7 +16,7 @@ describe('mode component', () => {
     type: 'final',
     tagBranch: 'main',
     dryRun: false,
-    updateVersionsIn: false,
+    updateVersionsIn: 'false', // the default value MUST be a string
   };
 
   beforeEach(() => {
@@ -99,7 +99,7 @@ describe('mode product', () => {
     currentMajor: '0',
     tagBranch: 'main',
     preReleaseName: 'rc',
-    updateVersionsIn: false,
+    updateVersionsIn: 'false',
   };
 
   beforeEach(() => {
