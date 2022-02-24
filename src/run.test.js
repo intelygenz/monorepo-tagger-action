@@ -287,34 +287,12 @@ describe('version file updater', () => {
   test('component tag is present in versions file', async () => {
     // GIVEN a version and a component prefix
     const version = 'v0.99.0';
-    const expectedVersion = '0.100.0';
-    const componentPrefix = 'hello-';
-    octokitMock.repos.listTags = jest.fn().mockReturnValue({
-      data: [{ name: componentPrefix.concat(version) }],
-    });
-    // AND we DO WANT the version in file
-    params.useTagInVersionsFile = false;
-
-    // WHEN we run the action
-    await run(octokitMock, owner, repo, params);
-
-    // THEN version file was written
-    expect(fs.writeFile).toHaveBeenCalledTimes(1);
-
-    // AND the component prefix in the version file was NOT stripped
-    const updatedContent = fs.writeFile.mock.calls[0][1];
-    expect(updatedContent).toContain(expectedVersion);
-  });
-
-  test('component version is present in versions file', async () => {
-    // GIVEN a version and a component prefix
-    const version = 'v0.99.0';
     const expectedTag = 'v0.100.0';
     const componentPrefix = 'hello-';
     octokitMock.repos.listTags = jest.fn().mockReturnValue({
       data: [{ name: componentPrefix.concat(version) }],
     });
-    // AND we DO WANT the tag in the file
+    // AND we DO WANT the version in file
     params.useTagInVersionsFile = true;
 
     // WHEN we run the action
@@ -325,6 +303,28 @@ describe('version file updater', () => {
 
     // AND the component prefix in the version file was NOT stripped
     const updatedContent = fs.writeFile.mock.calls[0][1];
-    expect(updatedContent).toContain(expectedTag);
+    expect(updatedContent).toContain('tag: ' + componentPrefix + expectedTag);
+  });
+
+  test('component version is present in versions file', async () => {
+    // GIVEN a version and a component prefix
+    const version = 'v0.99.0';
+    const expectedVersion = '0.100.0';
+    const componentPrefix = 'hello-';
+    octokitMock.repos.listTags = jest.fn().mockReturnValue({
+      data: [{ name: componentPrefix.concat(version) }],
+    });
+    // AND we DO WANT the tag in the file
+    params.useTagInVersionsFile = 'false';
+
+    // WHEN we run the action
+    await run(octokitMock, owner, repo, params);
+
+    // THEN version file was written
+    expect(fs.writeFile).toHaveBeenCalledTimes(1);
+
+    // AND the component prefix in the version file was NOT stripped
+    const updatedContent = fs.writeFile.mock.calls[0][1];
+    expect(updatedContent).toContain('tag: ' + expectedVersion);
   });
 });
