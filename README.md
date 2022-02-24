@@ -33,6 +33,12 @@ is ready for the next release, then a new `release` branch is created and a new 
 The `release` branch can be deleted, or it can live for as long as you need to give support to that release. If you delete
 the branch you can restore it from the release tag created.
 
+### Action Outputs: TAG and VERSION
+
+The action has two outputs:
+
+- TAG: the tag is the tag that was created (eg. component-v1.0.1)  
+- VERSION: the version is the number in the tag (eg. 1.0.1)
 
 ### Updating Version Files
 

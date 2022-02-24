@@ -95,14 +95,11 @@ describe('mode component', () => {
     });
   });
 
-  test('should output a version with strip component tag option', async () => {
-    params.stripComponentPrefixFromTag = true;
-
+  test('should output a version', async () => {
     await run(octokitMock, owner, repo, params);
 
     expect(core.setFailed).toHaveBeenCalledTimes(0);
     expect(core.setOutput).toHaveBeenCalledTimes(2);
-    expect(core.setOutput).toHaveBeenCalledWith('tag', 'v0.98.1');
     expect(core.setOutput).toHaveBeenCalledWith('version', '0.98.1');
   });
 });
@@ -257,7 +254,7 @@ describe('version file updater', () => {
     tagBranch: 'main',
     dryRun: false,
     updateVersionsIn: '[{"file": "test/file.yaml", "property": "app.tag" }]',
-    stripComponentPrefixFromTag: true,
+    useTagInVersionsFile: true,
   };
 
   beforeEach(() => {
@@ -287,39 +284,16 @@ describe('version file updater', () => {
     actions.exec = jest.fn();
   });
 
-  test('component prefix is stripped from version file', async () => {
+  test('component tag is present in versions file', async () => {
     // GIVEN a version and a component prefix
     const version = 'v0.99.0';
-    const expectedVersion = 'v0.100.0';
+    const expectedVersion = '0.100.0';
     const componentPrefix = 'hello-';
     octokitMock.repos.listTags = jest.fn().mockReturnValue({
       data: [{ name: componentPrefix.concat(version) }],
     });
-    // AND we WANT to strip the component prefix from the tag
-    params.stripComponentPrefixFromTag = true;
-
-    // WHEN the updater is executed
-    await run(octokitMock, owner, repo, params);
-
-    // THEN version file was written
-    expect(fs.writeFile).toHaveBeenCalledTimes(1);
-
-    // AND the component prefix in the version file was stripped
-    const updatedContent = fs.writeFile.mock.calls[0][1];
-    expect(updatedContent).toContain(expectedVersion);
-    expect(updatedContent).not.toContain(componentPrefix);
-  });
-
-  test('component prefix is not stripped from version file', async () => {
-    // GIVEN a version and a component prefix
-    const version = 'v0.99.0';
-    const expectedVersion = 'v0.100.0';
-    const componentPrefix = 'hello-';
-    octokitMock.repos.listTags = jest.fn().mockReturnValue({
-      data: [{ name: componentPrefix.concat(version) }],
-    });
-    // AND we DO NOT WANT to strip the component prefix from the tag
-    params.stripComponentPrefixFromTag = false;
+    // AND we DO WANT the version in file
+    params.useTagInVersionsFile = false;
 
     // WHEN we run the action
     await run(octokitMock, owner, repo, params);
@@ -330,6 +304,27 @@ describe('version file updater', () => {
     // AND the component prefix in the version file was NOT stripped
     const updatedContent = fs.writeFile.mock.calls[0][1];
     expect(updatedContent).toContain(expectedVersion);
-    expect(updatedContent).toContain(componentPrefix);
+  });
+
+  test('component version is present in versions file', async () => {
+    // GIVEN a version and a component prefix
+    const version = 'v0.99.0';
+    const expectedTag = 'v0.100.0';
+    const componentPrefix = 'hello-';
+    octokitMock.repos.listTags = jest.fn().mockReturnValue({
+      data: [{ name: componentPrefix.concat(version) }],
+    });
+    // AND we DO WANT the tag in the file
+    params.useTagInVersionsFile = true;
+
+    // WHEN we run the action
+    await run(octokitMock, owner, repo, params);
+
+    // THEN version file was written
+    expect(fs.writeFile).toHaveBeenCalledTimes(1);
+
+    // AND the component prefix in the version file was NOT stripped
+    const updatedContent = fs.writeFile.mock.calls[0][1];
+    expect(updatedContent).toContain(expectedTag);
   });
 });
