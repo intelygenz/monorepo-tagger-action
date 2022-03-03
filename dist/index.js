@@ -18122,7 +18122,7 @@ module.exports = {
 /***/ ((module) => {
 
 function parseVersion(tag) {
-  const regex = new RegExp(`^v(\\d+).(\\d+)(?:.(\\d+))?`, 'g');
+  const regex = new RegExp(`(\\d+).(\\d+)(?:.(\\d+))?`, 'g');
   const matches = regex.exec(tag);
 
   if (!matches || matches.length <= 0) {
