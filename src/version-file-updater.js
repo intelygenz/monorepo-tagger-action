@@ -17,6 +17,11 @@ module.exports = function () {
     const versionFiles = JSON.parse(files);
     console.log('parsed files are ', versionFiles);
 
+    // Checkout the branch and update the repo contents.
+    // This is needed to avoid conflicts if another process has updated the repo after the commit that trigger
+    // the workflow using this action.
+    await prepareGit(branch);
+
     let filesUpdated = 0;
 
     versionFiles.forEach((file) => {
@@ -48,20 +53,28 @@ module.exports = function () {
 
     // commit the files
     if (filesUpdated > 0) {
-      return await commitChanges(branch, commitMessage, author, authorEmail);
+      return await commitChanges(commitMessage, author, authorEmail);
     }
   }
 
   /**
-   * Commit all changes in a given branch with a given author and commit message.
+   * Prepare the git repo by checking out the branch and pulling all changes.
    *
    * @param branch The branch to commit the changes.
+   */
+  async function prepareGit(branch) {
+    await actions.exec('git', ['checkout', branch]);
+    await actions.exec('git', ['pull']);
+  }
+
+  /**
+   * Commit all changes with a given author and commit message.
+   *
    * @param commitMessage The commit message.
    * @param authorName The author name.
    * @param authorEmail The author email.
    */
-  async function commitChanges(branch, commitMessage, authorName, authorEmail) {
-    await actions.exec('git', ['checkout', branch]);
+  async function commitChanges(commitMessage, authorName, authorEmail) {
     await actions.exec('git', ['add', '-A']);
     await actions.exec('git', ['config', '--local', 'user.name', authorName]);
     await actions.exec('git', ['config', '--local', 'user.email', authorEmail]);
