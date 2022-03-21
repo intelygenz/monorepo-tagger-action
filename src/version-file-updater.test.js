@@ -29,7 +29,7 @@ describe('update file with version', () => {
 
     // THEN no writes and no commits are made
     expect(fs.writeFile).toHaveBeenCalledTimes(0);
-    expect(actions.exec).toHaveBeenCalledTimes(0);
+    expect(actions.exec).toHaveBeenCalledTimes(2); // checkout + pull
   });
 
   test('two writes for an array of two files', async () => {
@@ -111,21 +111,23 @@ describe('update file with version', () => {
     );
 
     // THEN file was commited
-    expect(actions.exec).toHaveBeenCalledTimes(6);
+    expect(actions.exec).toHaveBeenCalledTimes(7);
 
     // AND the commit is correct
     const checkoutParams = actions.exec.mock.calls[0][1];
-    const addParams = actions.exec.mock.calls[1][1];
-    const configNameParams = actions.exec.mock.calls[2][1];
-    const configEmailParams = actions.exec.mock.calls[3][1];
-    const commitParams = actions.exec.mock.calls[4][1];
-    const pushParams = actions.exec.mock.calls[5][1];
+    const pullParams = actions.exec.mock.calls[1][1];
+    const addParams = actions.exec.mock.calls[2][1];
+    const configNameParams = actions.exec.mock.calls[3][1];
+    const configEmailParams = actions.exec.mock.calls[4][1];
+    const commitParams = actions.exec.mock.calls[5][1];
+    const pushParams = actions.exec.mock.calls[6][1];
 
     expect(checkoutParams[1]).toBe(branch); // checkout branch
+    expect(pullParams[0]).toBe('pull'); // pull
     expect(addParams[1]).toBe('-A'); // add -A
     expect(configNameParams[3]).toBe(author); // config --local user.name author
     expect(configEmailParams[3]).toBe(authorEmail); // config --local user.name authorEmail
-    expect(commitParams[3]).toBe(commitMessage); // config --local user.name authorEmail
+    expect(commitParams[3]).toBe(commitMessage); // commit --no-verify -m commitMessage
     expect(pushParams[0]).toBe('push'); // push
   });
 });
